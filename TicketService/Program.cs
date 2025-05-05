@@ -1,6 +1,13 @@
+using TicketService.Application.Interfaces;
+using TicketService.Application.UseCases;
+using TicketService.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<ITicketRepository, TicketRepository>();
+builder.Services.AddSingleton<GetTicketHandler>();
+builder.Services.AddSingleton<TicketDBContext>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

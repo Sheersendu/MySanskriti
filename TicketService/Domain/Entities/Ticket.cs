@@ -2,15 +2,22 @@
 
 namespace TicketService.Domain.Entities;
 
-public class Ticket(Guid bookingId)
+public class Ticket
 {
-	private Guid ticketID = new();
-	private Guid bookingID = bookingId;
-	private DateTime createdTimestamp = DateTime.Now;
-	private TicketStatus status = TicketStatus.CONFIRMED;
+	public Guid TicketId { get; set; } = Guid.NewGuid();
+	public Guid BookingId { get; set; }
+	public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
+	public TicketStatus Status { get; set; } = TicketStatus.CONFIRMED;
 
+	public Ticket() { }
+
+	public Ticket(Guid bookingId)
+	{
+		BookingId = bookingId;
+	}
+	
 	public void Cancel()
 	{
-		status = TicketStatus.CANCELLED;
+		Status = TicketStatus.CANCELLED;
 	}
 }

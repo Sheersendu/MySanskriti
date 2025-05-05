@@ -2,6 +2,6 @@
 
 public enum TicketStatus
 {
-	CONFIRMED,
-	CANCELLED
+	CANCELLED,
+	CONFIRMED
 }

@@ -1,6 +1,6 @@
 ﻿namespace TicketService.API.DTOs;
 
-public class CreateTicketRequest
+public class TicketRequest
 {
 	public Guid bookingId { get; set; }
 }
