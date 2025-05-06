@@ -7,4 +7,5 @@ public interface ITicketRepository
 {
 	Task<Ticket> GetTicketByBookingId(Guid bookingId);
 	Task<Ticket> CreateTicket(Ticket ticket);
+	Task<Ticket> CancelTicket(Ticket ticket);
 }

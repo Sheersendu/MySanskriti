@@ -10,11 +10,13 @@ public class TicketController : ControllerBase
 {
 	private readonly GetTicketHandler _getTicketHandler;
 	private readonly CreateTicketHandler _createTicketHandler;
+	private readonly CancelTicketHandler _cancelTicketHandler;
 	
-	public TicketController(GetTicketHandler getTicketHandler, CreateTicketHandler createTicketHandler)
+	public TicketController(GetTicketHandler getTicketHandler, CreateTicketHandler createTicketHandler, CancelTicketHandler cancelTicketHandler)
 	{
 		_getTicketHandler = getTicketHandler;
 		_createTicketHandler = createTicketHandler;
+		_cancelTicketHandler = cancelTicketHandler;
 	}
 	
 	[HttpGet]
@@ -30,9 +32,9 @@ public class TicketController : ControllerBase
 	}
 	
 	[HttpPost("cancel")]
-	public TicketResponse CancelTicket([FromBody] TicketRequest ticketRequest)
+	public async Task<TicketResponse> CancelTicket([FromBody] TicketRequest ticketRequest)
 	{
-		return new TicketResponse();
+		return await _cancelTicketHandler.Handle(ticketRequest);
 	}
 	
 }

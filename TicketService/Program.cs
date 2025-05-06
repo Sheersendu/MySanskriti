@@ -8,7 +8,7 @@ builder.Services.AddSingleton<TicketDBContext>();
 builder.Services.AddSingleton<ITicketRepository, TicketRepository>();
 builder.Services.AddSingleton<GetTicketHandler>();
 builder.Services.AddSingleton<CreateTicketHandler>();
-
+builder.Services.AddSingleton<CancelTicketHandler>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

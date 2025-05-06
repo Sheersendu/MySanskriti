@@ -24,4 +24,11 @@ public class TicketRepository(TicketDBContext context) : ITicketRepository
 		await context.SaveChangesAsync();
 		return ticket;
 	}
+	
+	public async Task<Ticket> CancelTicket(Ticket ticket)
+	{
+		context.Ticket.Update(ticket);
+		await context.SaveChangesAsync();
+		return ticket;
+	}
 }
