@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TicketService.API.DTOs;
 using TicketService.Application.Interfaces;
 using TicketService.Domain.Entities;
 
@@ -12,8 +13,15 @@ public class TicketRepository(TicketDBContext context) : ITicketRepository
 		var ticket = tickets.FirstOrDefault();
 		if (ticket == null)
 		{
-			throw new Exception($"No ticket for {bookingId} was found");
+			throw new Exception($"No ticket for Booking ID: `{bookingId}` was found");
 		}
+		return ticket;
+	}
+	
+	public async Task<Ticket> CreateTicket(Ticket ticket)
+	{
+		await context.Ticket.AddAsync(ticket);
+		await context.SaveChangesAsync();
 		return ticket;
 	}
 }

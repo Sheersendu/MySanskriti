@@ -6,7 +6,7 @@ public class Ticket
 {
 	public Guid TicketId { get; set; } = Guid.NewGuid();
 	public Guid BookingId { get; set; }
-	public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
+	public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow;
 	public TicketStatus Status { get; set; } = TicketStatus.CONFIRMED;
 
 	public Ticket() { }

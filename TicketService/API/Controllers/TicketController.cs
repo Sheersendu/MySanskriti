@@ -6,18 +6,27 @@ namespace TicketService.API.Controllers;
 
 [Route("api/ticket")]
 [ApiController]
-public class TicketController(GetTicketHandler getTicketHandler) : ControllerBase
+public class TicketController : ControllerBase
 {
+	private readonly GetTicketHandler _getTicketHandler;
+	private readonly CreateTicketHandler _createTicketHandler;
+	
+	public TicketController(GetTicketHandler getTicketHandler, CreateTicketHandler createTicketHandler)
+	{
+		_getTicketHandler = getTicketHandler;
+		_createTicketHandler = createTicketHandler;
+	}
+	
 	[HttpGet]
 	public async Task<TicketResponse> GetTicket([FromQuery] Guid bookingId)
 	{
-		return await getTicketHandler.Handle(bookingId);
+		return await _getTicketHandler.Handle(bookingId);
 	}
 	
 	[HttpPost("create")]
-	public TicketResponse CreateTicket([FromBody] TicketRequest ticketRequest)
+	public async Task<TicketResponse> CreateTicket([FromBody] TicketRequest ticketRequest)
 	{
-		return new TicketResponse();
+		return await _createTicketHandler.Handle(ticketRequest);
 	}
 	
 	[HttpPost("cancel")]
