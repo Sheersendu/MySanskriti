@@ -8,23 +8,11 @@ public class CancelTicketHandler(ITicketRepository ticketRepository)
 {
 	private ITicketRepository _ticketRepository = ticketRepository;
 
-	public async Task<TicketResponse> Handle(TicketRequest ticketRequest)
+	public async Task<Ticket> Handle(TicketRequest ticketRequest)
 	{
 		Ticket existingTicket = await _ticketRepository.GetTicketByBookingId(ticketRequest.bookingId);
 		existingTicket.Cancel();
-		await _ticketRepository.CancelTicket(existingTicket);
-		return MapToTicketResponse(existingTicket);
-	}
-	
-	private TicketResponse MapToTicketResponse(Ticket ticket)
-	{
-		TicketResponse ticketResponse = new TicketResponse
-		{
-			ticketId = ticket.TicketId,
-			bookingId = ticket.BookingId,
-			ticketStatus = ticket.Status.ToString()
-		};
-		return ticketResponse;
+		return await _ticketRepository.CancelTicket(existingTicket);
 	}
 	
 }
