@@ -24,10 +24,13 @@ public class TicketController : ControllerBase
 	}
 	
 	[HttpGet]
-	public async Task<TicketResponse> GetTicket([FromQuery] Guid bookingId)
+	public async Task<IActionResult> GetTicket([FromQuery] Guid bookingId)
 	{
+		if (bookingId == Guid.Empty)
+			return BadRequest("Invalid booking ID.");
+		
 		Ticket ticket = await _getTicketHandler.Handle(bookingId);
-		return _mapper.Map<Ticket, TicketResponse>(ticket);
+		return Ok(_mapper.Map<Ticket, TicketResponse>(ticket));
 	}
 	
 	[HttpPost("create")]
