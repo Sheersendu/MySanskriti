@@ -1,8 +1,11 @@
+using TicketService.API.Mappings;
 using TicketService.Application.Interfaces;
 using TicketService.Application.UseCases;
 using TicketService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(typeof(TicketResponseMapping));
 
 builder.Services.AddSingleton<TicketDBContext>();
 builder.Services.AddSingleton<ITicketRepository, TicketRepository>();

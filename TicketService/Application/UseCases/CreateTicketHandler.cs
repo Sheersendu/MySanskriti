@@ -8,7 +8,7 @@ public class CreateTicketHandler(ITicketRepository ticketRepository)
 {
 	private ITicketRepository _ticketRepository = ticketRepository;
 
-	public async Task<TicketResponse> Handle(TicketRequest ticketRequest)
+	public async Task<Ticket> Handle(TicketRequest ticketRequest)
 	{
 		Ticket newTicket = new()
 		{
@@ -16,17 +16,6 @@ public class CreateTicketHandler(ITicketRepository ticketRepository)
 		};
 		
 		Ticket savedTicket = await _ticketRepository.CreateTicket(newTicket);
-		return MapToTicketResponse(savedTicket);
-	}
-	
-	private TicketResponse MapToTicketResponse(Ticket ticket)
-	{
-		TicketResponse ticketResponse = new TicketResponse
-		{
-			ticketId = ticket.TicketId,
-			bookingId = ticket.BookingId,
-			ticketStatus = ticket.Status.ToString()
-		};
-		return ticketResponse;
+		return savedTicket;
 	}
 }
