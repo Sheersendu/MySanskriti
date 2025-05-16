@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TicketService.API.DTOs;
+using TicketService.Application.Exceptions;
 using TicketService.Application.UseCases;
 using TicketService.Domain.Entities;
+using TicketService.Domain.Exceptions;
 
 namespace TicketService.API.Controllers;
 
@@ -28,22 +30,50 @@ public class TicketController : ControllerBase
 	{
 		if (bookingId == Guid.Empty)
 			return BadRequest("Invalid booking ID.");
-		
-		Ticket ticket = await _getTicketHandler.Handle(bookingId);
-		return Ok(_mapper.Map<Ticket, TicketResponse>(ticket));
+		try
+		{
+			Ticket ticket = await _getTicketHandler.Handle(bookingId);
+			return Ok(_mapper.Map<Ticket, TicketResponse>(ticket));
+		}
+		catch (BookingNotFoundException exception)
+		{
+			return NotFound(exception.Message);
+		}
+		catch (Exception exception)
+		{
+			return StatusCode(500, exception.Message);
+		}
 	}
 	
 	[HttpPost("create")]
-	public async Task<TicketResponse> CreateTicket([FromBody] TicketRequest ticketRequest)
+	public async Task<IActionResult> CreateTicket([FromBody] TicketRequest ticketRequest)
 	{
 		Ticket ticket = await _createTicketHandler.Handle(ticketRequest);
-		return _mapper.Map<Ticket, TicketResponse>(ticket);
+		TicketResponse? response = _mapper.Map<Ticket, TicketResponse>(ticket);
+		return Ok(response);
 	}
 	
 	[HttpPost("cancel")]
-	public async Task<TicketResponse> CancelTicket([FromBody] TicketRequest ticketRequest)
+	public async Task<IActionResult> CancelTicket([FromBody] TicketRequest ticketRequest)
 	{
-		Ticket ticket = await _cancelTicketHandler.Handle(ticketRequest);
-		return _mapper.Map<Ticket, TicketResponse>(ticket);
+		try
+		{
+			Ticket ticket = await _cancelTicketHandler.Handle(ticketRequest);
+			TicketResponse? response = _mapper.Map<Ticket, TicketResponse>(ticket);
+			return Ok(response);
+		}
+		catch (BookingNotFoundException exception)
+		{
+			return NotFound(exception.Message);
+		}
+		catch (TicketAlreadyCancelledException exception)
+		{
+			return BadRequest(exception.Message);
+		}
+		catch (Exception exception)
+		{
+			return StatusCode(500, exception.Message);
+		}
+		
 	}
 }

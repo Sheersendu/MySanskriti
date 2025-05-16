@@ -11,4 +11,12 @@ public class TicketDBContext(IConfiguration configuration) : DbContext
 	}
 	
 	public DbSet<Ticket> Ticket { get; set; }
+	
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
+	{
+		modelBuilder.Entity<Ticket>()
+			.HasIndex(t => t.BookingId)
+			.IsUnique();
+	}
+
 }
