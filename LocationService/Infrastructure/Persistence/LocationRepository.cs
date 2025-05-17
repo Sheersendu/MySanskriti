@@ -8,7 +8,7 @@ public class LocationRepository(LocationDBContext locationDbContext) : ILocation
 {
 	public async Task<IEnumerable<Location>> GetAllLocationsByCity(string city)
 	{
-		var locations = await locationDbContext.Location.Where(location => location.City == city).ToListAsync();
+		var locations = await locationDbContext.Location.Where(location => location.City.ToLower() == city.ToLower()).ToListAsync();
 		return locations;
 	}
 	
