@@ -5,10 +5,9 @@ namespace LocationService.Application.UseCases;
 
 public class GetLocationHandler(ILocationRepository locationRepository, ILogger<GetLocationHandler> logger)
 {
-	private readonly ILogger<GetLocationHandler> _logger = logger;
-
-	public async Task<IEnumerable<Location>> GetAllLocationsByCity(string city)
+	public async Task<IEnumerable<Location>> Handle(string city)
 	{
+		logger.Log(LogLevel.Information,$"All locations for city: {city}");
 		return await locationRepository.GetAllLocationsByCity(city);
 	}
 }

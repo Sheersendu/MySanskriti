@@ -25,4 +25,11 @@ public class LocationRepository(LocationDBContext locationDbContext) : ILocation
 		await locationDbContext.SaveChangesAsync();
 		return location;
 	}
+	
+	public async Task<Location> GetLocationById(Guid locationId)
+	{
+		var location = await locationDbContext.Location.Where(location => location.LocationId == locationId).ToListAsync();
+		Location existingLocation = location.First();
+		return existingLocation;
+	}
 }

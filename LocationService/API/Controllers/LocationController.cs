@@ -10,9 +10,14 @@ namespace LocationService.API.Controllers;
 public class LocationController : ControllerBase
 {
 	private readonly GetLocationHandler _getLocationHandler;
-	public LocationController(GetLocationHandler getLocationHandler)
+	private readonly AddLocationHandler _addLocationHandler;
+	private readonly UpdateLocationHandler _updateLocationHandler;
+	
+	public LocationController(GetLocationHandler getLocationHandler, AddLocationHandler addLocationHandler, UpdateLocationHandler updateLocationHandler)
 	{
 		_getLocationHandler = getLocationHandler;
+		_addLocationHandler = addLocationHandler;
+		_updateLocationHandler = updateLocationHandler;
 	}
 	
 	[HttpGet]
@@ -21,25 +26,21 @@ public class LocationController : ControllerBase
 		if (string.IsNullOrEmpty(city))
 			return BadRequest("City name cannot be empty.");
 		
-		var locations = await _getLocationHandler.GetAllLocationsByCity(city);
+		var locations = await _getLocationHandler.Handle(city);
 		return Ok(locations);
 	}
 	
 	[HttpPost("add")]
 	public async Task<ActionResult> AddLocation([FromBody] LocationRequest locationRequest)
 	{
-		
-		Location location = new () { Street = locationRequest.street, City = locationRequest.city, State = locationRequest.state, PostalCode = locationRequest.postalCode };
-
+		Location location = await _addLocationHandler.Handle(locationRequest);
 		return Ok(location);
 	}
 	
-	[HttpPut("update")]
-	public async Task<ActionResult> UpdateLocation([FromBody] LocationRequest locationRequest)
+	[HttpPut("update/{locationId}")]
+	public async Task<ActionResult> UpdateLocation(Guid locationId, [FromBody] LocationRequest locationRequest)
 	{
-		
-		Location location = new () { Street = locationRequest.street, City = locationRequest.city, State = locationRequest.state, PostalCode = locationRequest.postalCode };
-
-		return Ok(location);
+		var updatedLocation = await _updateLocationHandler.Handle(locationId, locationRequest);
+		return Ok(updatedLocation);
 	}
 }
