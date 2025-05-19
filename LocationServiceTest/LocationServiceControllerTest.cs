@@ -74,6 +74,7 @@ public class LocationServiceControllerTest
 	{
 		// Arrange		
 		var city = string.Empty;
+		const string exceptionMessage = "City name cannot be empty.";
 		
 		// Act
 		ActionResult result = _locationController.GetLocationByCity(city).Result;
@@ -82,7 +83,7 @@ public class LocationServiceControllerTest
 		Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
 		BadRequestObjectResult? badResult = result as BadRequestObjectResult;
 		Assert.That(badResult, Is.Not.Null);
-		Assert.AreEqual("City name cannot be empty.", badResult.Value.ToString());
+		Assert.That(badResult.Value?.ToString(), Is.EqualTo(exceptionMessage));
 	}
 
 	[Test]
@@ -147,7 +148,7 @@ public class LocationServiceControllerTest
 		Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
 		NotFoundObjectResult? notFoundResult = result as NotFoundObjectResult;
 		Assert.That(notFoundResult, Is.Not.Null);
-		Assert.AreEqual(exceptionMessage, notFoundResult.Value?.ToString());
+		Assert.That(notFoundResult.Value?.ToString(), Is.EqualTo(exceptionMessage));
 
 	}
 }
