@@ -9,6 +9,7 @@ public class LocationRequestToLocationMapping : Profile
 	public LocationRequestToLocationMapping()
 	{
 		CreateMap<LocationRequest, Location>()
+			.ForMember(dst => dst.BuildingName, opt => opt.MapFrom(src => src.buildingName))
 			.ForMember(dest => dest.City, opt => opt.MapFrom(src => src.city))
 			.ForMember(dest => dest.State, opt => opt.MapFrom(src => src.state))
 			.ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.street))

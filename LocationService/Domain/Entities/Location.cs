@@ -3,6 +3,7 @@
 public class Location
 {
 	public Guid LocationId { get; set; } = Guid.NewGuid();
+	public required string BuildingName { get; set; }
 	public required string Street { get; set; }
 	public required string City { get; set; }
 	public required string State { get; set; }
@@ -10,16 +11,18 @@ public class Location
 
 	public Location() { }
 	
-	public Location(string street, string city, string state, string postalCode)
+	public Location(string buildingName, string street, string city, string state, string postalCode)
 	{
+		BuildingName = buildingName;
 		Street = street;
 		City = city;
 		State = state;
 		PostalCode = postalCode;
 	}
 	
-	public void Update(string street, string city, string state, string postalCode)
+	public void Update(string buildingName, string street, string city, string state, string postalCode)
 	{
+		BuildingName = buildingName;
 		Street = street;
 		City = city;
 		State = state;

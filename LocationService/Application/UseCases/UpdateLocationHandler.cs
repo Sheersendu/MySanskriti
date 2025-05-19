@@ -10,7 +10,10 @@ public class UpdateLocationHandler(ILocationRepository locationRepository, ILogg
 	{
 		var existingLocation = await locationRepository.GetLocationById(locationId);
 		
-		logger.Log(LogLevel.Information, $"\nUpdates: \n1. Street: {existingLocation.Street} to {locationRequest.street}, \n2. City: {existingLocation.City} to {locationRequest.city}, \n3. State: {existingLocation.State} to {locationRequest.state}, \n4. PostalCode: {existingLocation.PostalCode} to {locationRequest.postalCode}");
+		logger.Log(LogLevel.Information, $"\nUpdates: \n1. Street: {existingLocation.Street} to {locationRequest.street}, \n2. City: {existingLocation.City} to {locationRequest.city}, " +
+										$"\n3. State: {existingLocation.State} to {locationRequest.state}, \n4. PostalCode: {existingLocation.PostalCode} to {locationRequest.postalCode}, " +
+										$"\n5. BuildingName: {existingLocation.BuildingName} to {locationRequest.buildingName}");
+		existingLocation.BuildingName = locationRequest.buildingName;
 		existingLocation.City = locationRequest.city;
 		existingLocation.State = locationRequest.state;
 		existingLocation.Street = locationRequest.street;

@@ -4,6 +4,10 @@ namespace LocationService.API.DTOs;
 
 public class LocationRequest
 {
+	[Required(ErrorMessage = "Building Name is required.")]
+	[StringLength(100, ErrorMessage = "Building name should be within 5 to 100 characters.", MinimumLength = 5)]
+	public required string buildingName { get; set; }
+	
 	[Required(ErrorMessage = "Street is required.")]
 	[StringLength(100, ErrorMessage = "Street name should be within 5 to 100 characters.", MinimumLength = 5)]
 	public required string street { get; set; }
