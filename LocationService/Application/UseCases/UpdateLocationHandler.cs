@@ -10,17 +10,32 @@ public class UpdateLocationHandler(ILocationRepository locationRepository, ILogg
 	{
 		var existingLocation = await locationRepository.GetLocationById(locationId);
 		
-		logger.Log(LogLevel.Information, $"\nUpdates: \n1. Street: {existingLocation.Street} to {locationRequest.street}, \n2. City: {existingLocation.City} to {locationRequest.city}, " +
-										$"\n3. State: {existingLocation.State} to {locationRequest.state}, \n4. PostalCode: {existingLocation.PostalCode} to {locationRequest.postalCode}, " +
-										$"\n5. BuildingName: {existingLocation.BuildingName} to {locationRequest.buildingName}");
-		existingLocation.BuildingName = locationRequest.buildingName;
-		existingLocation.City = locationRequest.city;
-		existingLocation.State = locationRequest.state;
-		existingLocation.Street = locationRequest.street;
-		existingLocation.PostalCode = locationRequest.postalCode;
-
+		LogChanges(existingLocation, locationRequest);
+		existingLocation.UpdateDetails(
+			locationRequest.buildingName,
+			locationRequest.street,
+			locationRequest.city,
+			locationRequest.state,
+			locationRequest.postalCode
+		);
 		await locationRepository.UpdateLocation(existingLocation);
 		
 		return existingLocation;
+	}
+	
+	private void LogChanges(Location oldLocation, LocationRequest updatedLocation)
+	{
+		logger.LogInformation(
+			"Updating Location : {LocationId}. Changes: {@Changes} \n",
+			oldLocation.LocationId,
+			new
+			{
+				Street = new { From = oldLocation.Street, To = updatedLocation.street },
+				City = new { From = oldLocation.City, To = updatedLocation.city },
+				State = new { From = oldLocation.State, To = updatedLocation.state },
+				PostalCode = new { From = oldLocation.PostalCode, To = updatedLocation.postalCode },
+				BuildingName = new { From = oldLocation.BuildingName, To = updatedLocation.buildingName }
+			}
+		);
 	}
 }

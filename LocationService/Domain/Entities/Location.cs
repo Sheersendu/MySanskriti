@@ -20,7 +20,7 @@ public class Location
 		PostalCode = postalCode;
 	}
 	
-	public void Update(string buildingName, string street, string city, string state, string postalCode)
+	public void UpdateDetails(string buildingName, string street, string city, string state, string postalCode)
 	{
 		BuildingName = buildingName;
 		Street = street;
