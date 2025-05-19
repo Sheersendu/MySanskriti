@@ -46,6 +46,7 @@ Note:
 2. You cannot cancel non-existent ticket (booking doesn't exist)
 
 TODO:
+
 0. Only ALLOW users with ADMIN Role to create and update location 
 1. User should be able to update event location create an API for that as well
 2. Cache Top 10–20 Latest Events city wise
