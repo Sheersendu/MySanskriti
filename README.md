@@ -44,3 +44,28 @@ Relations:
 Note:
 1. You cannot cancel already cancelled ticket
 2. You cannot cancel non-existent ticket (booking doesn't exist)
+
+TODO:
+0. Only ALLOW users with ADMIN Role to create and update location 
+1. User should be able to update event location create an API for that as well
+2. Cache Top 10–20 Latest Events city wise
+3. Pagination for Events (for Lazy Loading)
+
+    Cursor-based Pagination
+    
+    Because you’re sorting by CreatedAt DESC, cursor-based pagination is:
+    
+     - Faster for large data
+     - Doesn’t suffer from "page drift" if new events are added while paginating
+    
+    Example:
+    
+    `GET /api/events?cursor=2024-05-17T08:00:00Z&pageSize=20`
+    
+    Server logic:
+    
+    `var events = await _context.Events
+    .Where(e => e.CreatedAt < cursor)
+    .OrderByDescending(e => e.CreatedAt)
+    .Take(pageSize)
+    .ToListAsync();`

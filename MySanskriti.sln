@@ -4,6 +4,8 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketService", "TicketService\TicketService.csproj", "{582CF50D-B5BC-1445-9F24-08D470D8D817}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationService", "LocationService\LocationService.csproj", "{ED2560F9-CAA6-4C5F-ACED-4B059A576DC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +16,10 @@ Global
 		{582CF50D-B5BC-1445-9F24-08D470D8D817}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{582CF50D-B5BC-1445-9F24-08D470D8D817}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{582CF50D-B5BC-1445-9F24-08D470D8D817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED2560F9-CAA6-4C5F-ACED-4B059A576DC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED2560F9-CAA6-4C5F-ACED-4B059A576DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED2560F9-CAA6-4C5F-ACED-4B059A576DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED2560F9-CAA6-4C5F-ACED-4B059A576DC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
