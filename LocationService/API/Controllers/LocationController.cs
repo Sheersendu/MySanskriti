@@ -22,7 +22,7 @@ public class LocationController : ControllerBase
 	}
 	
 	[HttpGet]
-	public async Task<IActionResult> GetLocationByCity([FromQuery] string city)
+	public async Task<ActionResult> GetLocationByCity([FromQuery] string city)
 	{
 		if (string.IsNullOrEmpty(city))
 			return BadRequest("City name cannot be empty.");
