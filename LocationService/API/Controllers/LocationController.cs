@@ -1,4 +1,5 @@
 ﻿using LocationService.API.DTOs;
+using LocationService.Application.Exceptions;
 using LocationService.Application.UseCases;
 using LocationService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -25,22 +26,47 @@ public class LocationController : ControllerBase
 	{
 		if (string.IsNullOrEmpty(city))
 			return BadRequest("City name cannot be empty.");
-		
-		var locations = await _getLocationHandler.Handle(city);
-		return Ok(locations);
+		try
+		{
+			var locations = await _getLocationHandler.Handle(city);
+			return Ok(locations);
+		}
+		catch (Exception exception)
+		{
+			return StatusCode(500, exception.Message);
+		}
 	}
 	
 	[HttpPost("add")]
 	public async Task<ActionResult> AddLocation([FromBody] LocationRequest locationRequest)
 	{
-		Location location = await _addLocationHandler.Handle(locationRequest);
-		return Ok(location);
+		try
+		{
+			Location location = await _addLocationHandler.Handle(locationRequest);
+			return Ok(location);
+		}
+		catch (Exception exception)
+		{
+			return StatusCode(500, exception.Message);
+		}
 	}
 	
 	[HttpPut("update/{locationId}")]
 	public async Task<ActionResult> UpdateLocation(Guid locationId, [FromBody] LocationRequest locationRequest)
 	{
-		var updatedLocation = await _updateLocationHandler.Handle(locationId, locationRequest);
-		return Ok(updatedLocation);
+		try
+		{
+			var updatedLocation = await _updateLocationHandler.Handle(locationId, locationRequest);
+			return Ok(updatedLocation);
+		}
+		catch (LocationNotFoundException exception)
+		{
+			return NotFound(exception.Message);
+		}
+		catch (Exception exception)
+		{
+			return StatusCode(500, exception.Message);
+		}
+		
 	}
 }

@@ -1,4 +1,5 @@
-﻿using LocationService.Application.Interfaces;
+﻿using LocationService.Application.Exceptions;
+using LocationService.Application.Interfaces;
 using LocationService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +30,10 @@ public class LocationRepository(LocationDBContext locationDbContext) : ILocation
 	public async Task<Location> GetLocationById(Guid locationId)
 	{
 		var location = await locationDbContext.Location.Where(location => location.LocationId == locationId).ToListAsync();
+		if (location == null || location.Count == 0)
+		{
+			throw new LocationNotFoundException($"No location for ID: `{locationId}` was found");
+		}
 		Location existingLocation = location.First();
 		return existingLocation;
 	}
