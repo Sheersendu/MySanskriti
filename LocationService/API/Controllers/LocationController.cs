@@ -56,8 +56,8 @@ public class LocationController : ControllerBase
 	{
 		try
 		{
-			var updatedLocation = await _updateLocationHandler.Handle(locationId, locationRequest);
-			return Ok(updatedLocation);
+			await _updateLocationHandler.Handle(locationId, locationRequest);
+			return NoContent();
 		}
 		catch (LocationNotFoundException exception)
 		{

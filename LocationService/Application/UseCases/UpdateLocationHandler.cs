@@ -8,26 +8,19 @@ public class UpdateLocationHandler(ILocationRepository locationRepository, ILogg
 {
 	public async Task<Location> Handle(Guid locationId, LocationRequest locationRequest)
 	{
-		try
-		{
-			var existingLocation = await locationRepository.GetLocationById(locationId);
-		
-			LogChanges(existingLocation, locationRequest);
-			existingLocation.UpdateDetails(
-				locationRequest.buildingName,
-				locationRequest.street,
-				locationRequest.city,
-				locationRequest.state,
-				locationRequest.postalCode
-			);
-			await locationRepository.UpdateLocation(existingLocation);
-		
-			return existingLocation;
-		}
-		catch (Exception ex)
-		{
-			throw ex;
-		}
+		var existingLocation = await locationRepository.GetLocationById(locationId);
+	
+		LogChanges(existingLocation, locationRequest);
+		existingLocation.UpdateDetails(
+			locationRequest.buildingName,
+			locationRequest.street,
+			locationRequest.city,
+			locationRequest.state,
+			locationRequest.postalCode
+		);
+		await locationRepository.UpdateLocation(existingLocation);
+	
+		return existingLocation;
 	}
 	
 	private void LogChanges(Location oldLocation, LocationRequest updatedLocation)
