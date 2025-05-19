@@ -5,7 +5,7 @@ using LocationService.Domain.Entities;
 
 namespace LocationService.Application.UseCases;
 
-public class AddLocationHandler(ILocationRepository locationRepository, IMapper mapper, ILogger<GetLocationHandler> logger)
+public class AddLocationHandler(ILocationRepository locationRepository, IMapper mapper, ILogger<AddLocationHandler> logger)
 {
 	public async Task<Location> Handle(LocationRequest locationRequest)
 	{
