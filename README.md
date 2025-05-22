@@ -41,9 +41,6 @@ Relations:
 5. Event has location, seat
 6. Ticket has booking (details), Payment
 
-Note:
-1. You cannot cancel already cancelled ticket
-2. You cannot cancel non-existent ticket (booking doesn't exist)
 
 TODO:
 

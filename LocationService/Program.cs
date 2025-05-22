@@ -10,6 +10,7 @@ builder.Services.AddAutoMapper(typeof(LocationRequestToLocationMapping));
 builder.Services.AddSingleton<LocationDBContext>();
 builder.Services.AddSingleton<ILocationRepository, LocationRepository>();
 builder.Services.AddSingleton<GetLocationHandler>();
+builder.Services.AddSingleton<GetLocationByLocationIdHandler>();
 builder.Services.AddSingleton<AddLocationHandler>();
 builder.Services.AddSingleton<UpdateLocationHandler>();
 

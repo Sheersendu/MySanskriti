@@ -7,5 +7,5 @@ public interface ILocationRepository
 	Task<IEnumerable<Location>> GetAllLocationsByCity(string city);
 	Task<Location> AddLocation(Location location);
 	Task<Location> UpdateLocation(Location location);
-	Task<Location> GetLocationById(Guid locationId);
+	Task<Location> GetLocationByLocationId(Guid locationId);
 }
