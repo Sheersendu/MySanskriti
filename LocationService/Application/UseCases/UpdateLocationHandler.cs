@@ -8,7 +8,7 @@ public class UpdateLocationHandler(ILocationRepository locationRepository, ILogg
 {
 	public async Task<Location> Handle(Guid locationId, LocationRequest locationRequest)
 	{
-		var existingLocation = await locationRepository.GetLocationById(locationId);
+		var existingLocation = await locationRepository.GetLocationByLocationId(locationId);
 	
 		LogChanges(existingLocation, locationRequest);
 		existingLocation.UpdateDetails(

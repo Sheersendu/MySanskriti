@@ -13,16 +13,38 @@ public class LocationController : ControllerBase
 	private readonly GetLocationHandler _getLocationHandler;
 	private readonly AddLocationHandler _addLocationHandler;
 	private readonly UpdateLocationHandler _updateLocationHandler;
+	private readonly GetLocationByLocationIdHandler _getLocationByLocationIdHandler;
 	
-	public LocationController(GetLocationHandler getLocationHandler, AddLocationHandler addLocationHandler, UpdateLocationHandler updateLocationHandler)
+	public LocationController(GetLocationHandler getLocationHandler, AddLocationHandler addLocationHandler, UpdateLocationHandler updateLocationHandler, GetLocationByLocationIdHandler getLocationByLocationIDHandler)
 	{
 		_getLocationHandler = getLocationHandler;
 		_addLocationHandler = addLocationHandler;
 		_updateLocationHandler = updateLocationHandler;
+		_getLocationByLocationIdHandler = getLocationByLocationIDHandler;
 	}
 	
+	[HttpGet("{locationId}")]
+	public async Task<ActionResult> GetLocationByLocationId(Guid locationId)
+	{
+		if (locationId == Guid.Empty || locationId == null)
+			return BadRequest("Location ID cannot be empty.");
+		try
+		{
+			var location = await _getLocationByLocationIdHandler.Handle(locationId);
+			return Ok(location);
+		}
+		catch (LocationNotFoundException exception)
+		{
+			return NotFound(exception.Message);
+		}
+		catch (Exception exception)
+		{
+			return StatusCode(500, exception.Message);
+		}
+	}
+
 	[HttpGet]
-	public async Task<IActionResult> GetLocationByCity([FromQuery] string city)
+	public async Task<ActionResult> GetLocationByCity([FromQuery] string city)
 	{
 		if (string.IsNullOrEmpty(city))
 			return BadRequest("City name cannot be empty.");

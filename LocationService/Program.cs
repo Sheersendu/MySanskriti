@@ -7,9 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(LocationRequestToLocationMapping));
 
-builder.Services.AddDbContext<LocationDBContext>();
+builder.Services.AddSingleton<LocationDBContext>();
 builder.Services.AddSingleton<ILocationRepository, LocationRepository>();
 builder.Services.AddSingleton<GetLocationHandler>();
+builder.Services.AddSingleton<GetLocationByLocationIdHandler>();
 builder.Services.AddSingleton<AddLocationHandler>();
 builder.Services.AddSingleton<UpdateLocationHandler>();
 

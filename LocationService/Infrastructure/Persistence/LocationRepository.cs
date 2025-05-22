@@ -27,7 +27,7 @@ public class LocationRepository(LocationDBContext locationDbContext) : ILocation
 		return location;
 	}
 	
-	public async Task<Location> GetLocationById(Guid locationId)
+	public async Task<Location> GetLocationByLocationId(Guid locationId)
 	{
 		var existingLocation = await locationDbContext.Location.FirstOrDefaultAsync(location => location.LocationId == locationId);
 		if (existingLocation == null)
