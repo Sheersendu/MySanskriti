@@ -24,7 +24,7 @@ public class LocationServiceControllerTest
 		var addLocationHandlerMockLogger = new Mock<ILogger<AddLocationHandler>>();
 		var updateLocationHandlerMockLogger = new Mock<ILogger<UpdateLocationHandler>>();
 		_mockLocationRepository = new Mock<ILocationRepository>();
-		MapperConfiguration configuration = new MapperConfiguration(cfg =>
+		MapperConfiguration configuration = new (cfg =>
 		{
 			cfg.AddProfile<LocationRequestToLocationMapping>();
 		});
@@ -34,7 +34,8 @@ public class LocationServiceControllerTest
 		GetLocationHandler getLocationHandler = new (_mockLocationRepository.Object, getLocationHandlerMockLogger.Object);
 		AddLocationHandler addLocationHandler = new (_mockLocationRepository.Object, mapper, addLocationHandlerMockLogger.Object);
 		UpdateLocationHandler updateLocationHandler = new (_mockLocationRepository.Object, updateLocationHandlerMockLogger.Object);
-		_locationController = new (getLocationHandler, addLocationHandler, updateLocationHandler);
+		GetLocationByLocationIdHandler getLocationByLocationIdHandler = new (_mockLocationRepository.Object);
+		_locationController = new (getLocationHandler, addLocationHandler, updateLocationHandler, getLocationByLocationIdHandler);
 	}
 
 	[Test]
@@ -139,7 +140,7 @@ public class LocationServiceControllerTest
 			buildingName = "buildingName",
 		};
 		var exceptionMessage = $"No Location for ID: `{locationId}` found.";
-		_mockLocationRepository.Setup(obj => obj.GetLocationById(locationId)).Throws(new LocationNotFoundException(exceptionMessage));
+		_mockLocationRepository.Setup(obj => obj.GetLocationByLocationId(locationId)).Throws(new LocationNotFoundException(exceptionMessage));
 
 		// Act
 		ActionResult result = _locationController.UpdateLocation(locationId, locationRequest).Result;
@@ -150,5 +151,40 @@ public class LocationServiceControllerTest
 		Assert.That(notFoundResult, Is.Not.Null);
 		Assert.That(notFoundResult.Value?.ToString(), Is.EqualTo(exceptionMessage));
 
+	}
+	
+	[Test]
+	public void TestGetLocation_WhenValidLocationId_ShouldReturnLocationList()
+	{
+		// Arrange
+		Guid locationId = Guid.NewGuid();
+		Location location = new()
+		{
+			LocationId = locationId,
+			City = "city",
+			State = "state",
+			Street = "street",
+			PostalCode = "postalCode",
+			BuildingName = "buildingName"
+		};
+		
+		_mockLocationRepository.Setup(obj => obj.GetLocationByLocationId(locationId)).ReturnsAsync(location);
+		
+		// Act
+		ActionResult result = _locationController.GetLocationByLocationId(locationId).Result;
+		
+		// Assert
+		Assert.That(result, Is.Not.Null);
+		Assert.That(result, Is.InstanceOf<OkObjectResult>());
+		
+		var okResult = result as OkObjectResult;
+		
+		Assert.That(okResult, Is.Not.Null);
+		
+		var actualLocation = okResult.Value as Location;
+		
+		Assert.That(actualLocation, Is.Not.Null);
+		
+		Assert.That(actualLocation.LocationId, Is.EqualTo(locationId));
 	}
 }
