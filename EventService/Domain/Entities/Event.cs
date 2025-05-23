@@ -11,8 +11,12 @@ public class Event
 	public string Timing { get; set; }
 	public string Type { get; set; }
 	public Guid LocationId { get; set; }
+	public string Address { get; set; }
+	public string City { get; set; }
 	[JsonIgnore]
 	public string Status { get; set; }
+	[JsonIgnore]
+	public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
 	
 	public Event(){}
 

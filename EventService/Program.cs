@@ -10,7 +10,12 @@ builder.Services.AddSingleton<IEventRepository, EventRepository>();
 builder.Services.AddSingleton<CreateEventHandler>();
 builder.Services.AddSingleton<UpdateEventHandler>();
 builder.Services.AddSingleton<GetEventByEventIdHandler>();
-builder.Services.AddSingleton<GetEventByEventType>();
+builder.Services.AddSingleton<GetEventByEventTypeOrCity>();
+builder.Services.AddHttpClient<ILocationClient, LocationClient>(client =>
+{
+	client.BaseAddress = new Uri("http://localhost:5173");
+});
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

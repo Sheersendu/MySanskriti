@@ -7,5 +7,5 @@ public interface IEventRepository
 	Task<Event> CreateEvent(Event newEvent);
 	Task<Event> UpdateEvent(Event existingEvent);
 	Task<Event> GetEventByEventId(Guid eventId);
-	Task<List<Event>> GetEventByEventType(string eventType);
+	Task<List<Event>> GetEventByCityAndOrEventType(string city, string eventType);
 }

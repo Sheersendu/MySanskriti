@@ -1,4 +1,5 @@
-﻿using EventService.Application.Interfaces;
+﻿using EventService.Application.Exceptions;
+using EventService.Application.Interfaces;
 using EventService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,16 +24,24 @@ public class EventRepository(EventDBContext eventDbContext) : IEventRepository
 	public async Task<Event> GetEventByEventId(Guid eventId)
 	{
 		var existingEvent = await eventDbContext.Events.FirstOrDefaultAsync(e => e.EventId == eventId);
-		// if (existingEvent == null)
-		// {
-		// 	throw new EventNotFoundException($"No event for ID: `{eventId}` was found");
-		// }
+		if (existingEvent == null)
+		{
+			throw new EventNotFoundException($"No event for ID: `{eventId}` was found");
+		}
 		return existingEvent;
 	}
 	
-	public Task<List<Event>> GetEventByEventType(string eventType)
+	public async Task<List<Event>> GetEventByCityAndOrEventType(string city, string eventType)
 	{
-		var existingEvent = eventDbContext.Events.Where(e => e.Type == eventType.ToUpper()).ToListAsync();
-		return existingEvent;
+	    if (string.IsNullOrEmpty(eventType))
+	    {
+	        return await eventDbContext.Events
+	            .Where(e => e.City.ToLower() == city.ToLower())
+	            .ToListAsync();
+	    }
+		
+	    return await eventDbContext.Events
+	        .Where(e => e.City.Equals(city, StringComparison.CurrentCultureIgnoreCase) && e.Type.Equals(eventType, StringComparison.CurrentCultureIgnoreCase))
+	        .ToListAsync();
 	}
 }
