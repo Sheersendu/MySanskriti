@@ -33,14 +33,14 @@ public class EventServiceController(
 	}
 	
 	[HttpGet]
-	public async Task<ActionResult> GetEventByEventType([FromQuery] string city, [FromQuery] string? type)
+	public async Task<ActionResult> GetEventByEventType([FromQuery] string city, [FromQuery] string? type, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
 	{
 		if ((city == null || string.IsNullOrEmpty(city)) && (type == null || string.IsNullOrEmpty(type)))
 		{
 			return BadRequest("Please provide either a city or an event type.");
 		}
 		
-		List<Event> events = await getEventByEventTypeOrCity.Handle(city, type);
+		List<Event> events = await getEventByEventTypeOrCity.Handle(city, type, pageNumber, pageSize);
 		return Ok(events);
 	}
 	

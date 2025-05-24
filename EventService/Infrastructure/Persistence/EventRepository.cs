@@ -31,17 +31,24 @@ public class EventRepository(EventDBContext eventDbContext) : IEventRepository
 		return existingEvent;
 	}
 	
-	public async Task<List<Event>> GetEventByCityAndOrEventType(string city, string eventType)
+	public async Task<List<Event>> GetEventByCityAndOrEventType(string city, string eventType, int pageNumber, int pageSize)
 	{
+		var query = eventDbContext.Events.AsQueryable();
 	    if (string.IsNullOrEmpty(eventType))
-	    {
-	        return await eventDbContext.Events
-	            .Where(e => e.City.ToLower() == city.ToLower())
-	            .ToListAsync();
-	    }
+		{
+			query = query.Where(e => EF.Functions.ILike(e.City, city));
+		}
+		else
+		{
+			query = query.Where(e =>
+				EF.Functions.ILike(e.City, city) &&
+				EF.Functions.ILike(e.Type, eventType));
+		}
 		
-	    return await eventDbContext.Events
-	        .Where(e => e.City.Equals(city, StringComparison.CurrentCultureIgnoreCase) && e.Type.Equals(eventType, StringComparison.CurrentCultureIgnoreCase))
-	        .ToListAsync();
+		List<Event> eventList = await query.OrderByDescending(e => e.Timing)
+			.Skip((pageNumber - 1) * pageSize) // Skip records for previous pages
+			.Take(pageSize)
+			.ToListAsync();
+		return eventList.OrderBy(e => e.Timing).ToList();
 	}
 }

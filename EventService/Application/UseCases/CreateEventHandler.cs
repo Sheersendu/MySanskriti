@@ -16,8 +16,7 @@ public class CreateEventHandler(IEventRepository eventRepository, ILocationClien
 
 	private async Task<Event> CreateEventFromEventRequest(EventRequest eventRequest)
 	{
-		var dateFormat = "dd-MM-yyyy HH:mm";
-		var formattedEventTiming = eventRequest.Timing.ToString(dateFormat);
+		var formattedEventTiming = eventRequest.Timing.ToString(Constants.DateFormat);
 		LocationDTO locationDetails = await locationClient.GetLocationByLocationId(eventRequest.LocationId);
 		var address = String.Concat(locationDetails.BuildingName, "\n", locationDetails.Street, ", ", locationDetails.City, "\n", locationDetails.State, "\n", locationDetails.PostalCode);
 		return new Event

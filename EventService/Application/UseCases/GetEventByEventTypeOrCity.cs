@@ -5,8 +5,11 @@ namespace EventService.Application.UseCases;
 
 public class GetEventByEventTypeOrCity(IEventRepository eventRepository)
 {
-	public Task<List<Event>> Handle(string city, string? eventType)
+	public Task<List<Event>> Handle(string city, string? eventType, int? pageNumber, int? pageSize)
 	{
-		return eventRepository.GetEventByCityAndOrEventType(city, eventType);
+		pageNumber ??= Constants.PageNumber;
+
+		pageSize ??= Constants.PageSize;
+		return eventRepository.GetEventByCityAndOrEventType(city, eventType, (int)pageNumber, (int)pageSize);
 	}
 }
