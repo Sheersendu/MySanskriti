@@ -2,10 +2,16 @@ using EventService.API.Mappings;
 using EventService.Application.Interfaces;
 using EventService.Application.UseCases;
 using EventService.Infrastructure.Persistence;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(EventResponseMapping));
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+	options.Configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis")).ToString();
+	options.InstanceName = "EventServiceInstance";
+});
 
 builder.Services.AddSingleton<EventDBContext>();
 builder.Services.AddSingleton<IEventRepository, EventRepository>();

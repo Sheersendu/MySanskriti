@@ -41,29 +41,32 @@ Relations:
 5. Event has location, seat
 6. Ticket has booking (details), Payment
 
+#### NOTE:
+
+
+By default, Redis won't evict anything unless it’s configured to do so. Run Redis Docker (everytime!) with:
+```
+docker run -d --name my-redis -p 6379:6379 redis
+
+-- go into redis-cli ( terminal )
+redis-cli
+
+-- setting maxmemory and eviction policy
+CONFIG SET maxmemory 100mb
+CONFIG SET maxmemory-policy allkeys-lru
+
+
+-- veriyng eviction policy
+CONFIG GET maxmemory
+CONFIG GET maxmemory-policy
+
+
+Explanation:
+- maxmemory 100mb: Limits Redis to 100 MB.
+- maxmemory-policy allkeys-lru: Enables LRU eviction across all keys.
+
+```
 
 TODO:
 
-0. Only ALLOW users with ADMIN Role to create and update location 
-1. User should be able to update event location create an API for that as well
-2. Cache Top 10–20 Latest Events city wise
-3. Pagination for Events (for Lazy Loading)
-
-    Cursor-based Pagination
-    
-    Because you’re sorting by CreatedAt DESC, cursor-based pagination is:
-    
-     - Faster for large data
-     - Doesn’t suffer from "page drift" if new events are added while paginating
-    
-    Example:
-    
-    `GET /api/events?cursor=2024-05-17T08:00:00Z&pageSize=20`
-    
-    Server logic:
-    
-    `var events = await _context.Events
-    .Where(e => e.CreatedAt < cursor)
-    .OrderByDescending(e => e.CreatedAt)
-    .Take(pageSize)
-    .ToListAsync();`
+- Only ALLOW users with ADMIN Role to create and update location
