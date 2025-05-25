@@ -1,4 +1,5 @@
-﻿using EventService.API.DTOs;
+﻿using AutoMapper;
+using EventService.API.DTOs;
 using EventService.Application.Exceptions;
 using EventService.Application.UseCases;
 using EventService.Domain.Entities;
@@ -12,7 +13,8 @@ public class EventServiceController(
 	CreateEventHandler createEventHandler, 
 	UpdateEventHandler updateEventHandler, 
 	GetEventByEventIdHandler getEventByEventIdHandler,
-	GetEventByEventTypeOrCity getEventByEventTypeOrCity) : ControllerBase
+	GetEventByEventTypeOrCity getEventByEventTypeOrCity,
+	IMapper _mapper) : ControllerBase
 {
 	[HttpGet("{eventId:guid}")]
 	public async Task<ActionResult> GetEventByEventId(Guid eventId)
@@ -33,15 +35,16 @@ public class EventServiceController(
 	}
 	
 	[HttpGet]
-	public async Task<ActionResult> GetEventByEventType([FromQuery] string city, [FromQuery] string? type, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+	public async Task<ActionResult> GetEventByCityOrEventType([FromQuery] string city, [FromQuery] string? type, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
 	{
-		if ((city == null || string.IsNullOrEmpty(city)) && (type == null || string.IsNullOrEmpty(type)))
+		if (string.IsNullOrEmpty(city))
 		{
-			return BadRequest("Please provide either a city or an event type.");
+			return BadRequest("Please select a city");
 		}
 		
 		List<Event> events = await getEventByEventTypeOrCity.Handle(city, type, pageNumber, pageSize);
-		return Ok(events);
+		List<EventResponse> eventResponse = events.Select(e => _mapper.Map<Event, EventResponse>(e)).ToList();
+		return Ok(eventResponse);
 	}
 	
 	[HttpPost("create")]
