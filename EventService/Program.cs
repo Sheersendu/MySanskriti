@@ -1,8 +1,11 @@
+using EventService.API.Mappings;
 using EventService.Application.Interfaces;
 using EventService.Application.UseCases;
 using EventService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(typeof(EventResponseMapping));
 
 builder.Services.AddSingleton<EventDBContext>();
 builder.Services.AddSingleton<IEventRepository, EventRepository>();
