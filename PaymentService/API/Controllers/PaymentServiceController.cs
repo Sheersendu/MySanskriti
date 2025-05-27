@@ -50,12 +50,12 @@ public class PaymentServiceController : ControllerBase
 				{
 					PriceData = new SessionLineItemPriceDataOptions
 					{
-						UnitAmount = 2000, // in paise (₹20.00)
-						Currency = "inr",
+						UnitAmount = 1235,
+						Currency = "usd",
 						ProductData = new SessionLineItemPriceDataProductDataOptions
 						{
-							Name = "T-shirt",
-							Description = "Something to wear"
+							Name = "Very costly stuff",
+							Description = "Someone's dream!"
 						},
 					},
 					Quantity = 1,
@@ -69,8 +69,32 @@ public class PaymentServiceController : ControllerBase
 		var sessionService = new SessionService();
 		var session = sessionService.Create(options);
 
-		Response.Headers.Add("Location", session.Url);
+		Response.Headers.Add("Location", session.Url); // needs to be sent to FE as it redirects user to Stripe’s hosted checkout page
 		return new StatusCodeResult(303); // redirect
 
 	}
+	
+	[HttpPost("webhook-endpoint")]
+	public async Task<IActionResult> StripeWebhook()
+	{
+		using var reader = new StreamReader(HttpContext.Request.Body);
+		var json = await reader.ReadToEndAsync();
+
+		var stripeEvent = EventUtility.ConstructEvent(
+			json,
+			Request.Headers["Stripe-Signature"],
+			""
+		);
+
+		
+		if (stripeEvent.Type.ToString() == "payment_intent.succeeded")
+		{
+			var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+			Console.WriteLine($"Payment for {paymentIntent.Amount} succeeded.");
+			// Process business logic here
+		}
+
+		return Ok();
+	}
+
 }
