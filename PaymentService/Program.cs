@@ -1,4 +1,13 @@
+using PaymentService.Application.Interfaces;
+using PaymentService.Application.UseCases;
+using PaymentService.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<PaymentDBContent>();
+builder.Services.AddSingleton<IPaymentRepository, PaymentRepository>();
+builder.Services.AddSingleton<GetPaymentsForUserIdHandler>();
+builder.Services.AddSingleton<CreatePaymentHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using PaymentService.API.DTOs;
+using PaymentService.Application.UseCases;
+using PaymentService.Domain.Entities;
+using PaymentService.Domain.Enums;
 using Stripe;
 using Stripe.Checkout;
 
@@ -11,8 +14,11 @@ namespace PaymentService.API.Controllers;
 [Route("/api/payment")]
 public class PaymentServiceController : ControllerBase
 {
-	public PaymentServiceController()
+	private readonly CreatePaymentHandler _createPaymentHandler;
+	
+	public PaymentServiceController(CreatePaymentHandler createPaymentHandler)
 	{
+		_createPaymentHandler = createPaymentHandler;
 		StripeConfiguration.ApiKey = "";
 	}
 	
@@ -41,22 +47,18 @@ public class PaymentServiceController : ControllerBase
 		var options = new SessionCreateOptions
 		{
 			Customer = customer.Id,
-			Metadata = new Dictionary<string, string>
-			{
-				{"booking_id", paymentRequest.bookingId.ToString()}
-			},
 			LineItems =
 			[
 				new()
 				{
 					PriceData = new SessionLineItemPriceDataOptions
 					{
-						UnitAmount = (long)paymentRequest.amount * 100, // Stripe expects amount in cents
-						Currency = "usd",
+						UnitAmount = (long)paymentRequest.amount * 100, // Stripe expects amount in cents hence multiply by 100
+						Currency = "inr",
 						ProductData = new SessionLineItemPriceDataProductDataOptions
 						{
-							Name = "Very costly stuff",
-							Description = "Someone's dream!"
+							Name = "Event Name",
+							Description = "Event description"
 						},
 					},
 					Quantity = 1,
@@ -66,6 +68,13 @@ public class PaymentServiceController : ControllerBase
 			Mode = "payment",
 			SuccessUrl = "http://localhost:4242/success",
 			CancelUrl = "http://localhost:4242/cancel",
+			PaymentIntentData = new SessionPaymentIntentDataOptions
+			{
+				Metadata = new Dictionary<string, string>
+				{
+					{ "booking_id", paymentRequest.bookingId.ToString() }
+				}
+			}
 		};
 
 		var sessionService = new SessionService();
@@ -91,20 +100,44 @@ public class PaymentServiceController : ControllerBase
 			""
 		);
 
-		
-		if (stripeEvent.Type == "payment_intent.succeeded") // payment_failed
+		switch (stripeEvent.Type)
 		{
-			var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-			var paymentAmount = paymentIntent?.Amount ?? 0;
-			Console.WriteLine($"Payment for {paymentAmount} succeeded.");
-		}
-		if (stripeEvent.Type == "checkout.session.completed")
-		{
-			var session = stripeEvent.Data.Object as Session;
-			var bookingId = session.Metadata["booking_id"];
-			Console.WriteLine($"Booking ID: {bookingId} - Checkout session completed successfully.");
-		}
+			case "checkout.session.completed":
+				var session = stripeEvent.Data.Object as Session;
+				if (session != null)
+				{
+					var paymentIntentId = session.PaymentIntentId;
+					var paymentIntentService = new PaymentIntentService();
+					var paymentIntent = await paymentIntentService.GetAsync(paymentIntentId);
+					var bookingIdStr = paymentIntent.Metadata["booking_id"];
+					var amount = session.AmountTotal/100 ?? 0;
 
+					await _createPaymentHandler.Handle(
+						amount: amount,
+						bookingId: Guid.TryParse(bookingIdStr, out var bid) ? bid : Guid.NewGuid(),
+						transactionId: paymentIntentId,
+						createdAt: DateTime.UtcNow,
+						paymentStatus: PaymentStatus.Completed
+					);
+					Console.WriteLine($"Payment succeeded for Booking ID: {bookingIdStr}");
+				}
+				break;
+
+			case "payment_intent.payment_failed":
+				var intent = stripeEvent.Data.Object as PaymentIntent;
+				var bookingId = intent?.Metadata["booking_id"];
+				var failedAmount = intent?.Amount/100 ?? 0;
+
+				await _createPaymentHandler.Handle(
+					amount: failedAmount,
+					bookingId: Guid.TryParse(bookingId, out var failedBid) ? failedBid : Guid.NewGuid(),
+					transactionId: intent.Id,
+					createdAt: DateTime.UtcNow,
+					paymentStatus: PaymentStatus.Failed
+				);
+				Console.WriteLine($"Payment failed. Booking ID: {bookingId}");
+				break;
+		}
 
 		return Ok();
 	}
