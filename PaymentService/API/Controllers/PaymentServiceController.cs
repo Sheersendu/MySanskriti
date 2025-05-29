@@ -15,18 +15,20 @@ namespace PaymentService.API.Controllers;
 public class PaymentServiceController : ControllerBase
 {
 	private readonly CreatePaymentHandler _createPaymentHandler;
+	private readonly GetPaymentsForUserIdHandler _getPaymentsForUserIdHandler;
 	
-	public PaymentServiceController(CreatePaymentHandler createPaymentHandler)
+	public PaymentServiceController(CreatePaymentHandler createPaymentHandler, GetPaymentsForUserIdHandler getPaymentsForUserIdHandler)
 	{
 		_createPaymentHandler = createPaymentHandler;
+		_getPaymentsForUserIdHandler = getPaymentsForUserIdHandler;
 		StripeConfiguration.ApiKey = "";
 	}
 	
 		
 	[HttpGet]
-	public string GetPaymentDetails()
+	public async Task<ActionResult> GetPaymentDetails([FromQuery] Guid userId)
 	{
-		return "Payment details retrieved successfully.";
+		return Ok(await _getPaymentsForUserIdHandler.Handle(userId));
 	}
 	
 	[HttpPost("create-checkout-session")]
