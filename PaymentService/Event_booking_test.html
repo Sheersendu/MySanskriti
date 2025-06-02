@@ -1,0 +1,27 @@
+﻿<html lang="en">
+<head>
+    <title>Book an event</title>
+    <script>
+        async function bookEvent() {
+            const response = await fetch('http://localhost:5269/api/payment/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    amount: 99999,
+                    bookingId: "8e8679e3-02b1-410b-9399-2c1e5606a971"
+                })
+            });
+
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        }
+    </script>
+</head>
+<body>
+<button onclick="bookEvent()">Book</button>
+</body>
+</html>
