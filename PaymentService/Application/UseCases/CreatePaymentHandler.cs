@@ -8,15 +8,6 @@ public class CreatePaymentHandler(IPaymentRepository paymentRepository)
 {
 	public async Task<Payment> Handle(double amount, Guid bookingId, string transactionId, DateTime createdAt, PaymentStatus paymentStatus)
 	{
-		// if (payment == null)
-		// {
-		// 	throw new ArgumentNullException(nameof(payment), "Payment cannot be null");
-		// }
-		//
-		// if (payment.Amount <= 0)
-		// {
-		// 	throw new ArgumentException("Payment amount must be greater than zero", nameof(payment.Amount));
-		// }
 		Payment payment = new()
 		{
 			Amount = amount,

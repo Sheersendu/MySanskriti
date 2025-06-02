@@ -8,6 +8,11 @@ builder.Services.AddSingleton<PaymentDBContent>();
 builder.Services.AddSingleton<IPaymentRepository, PaymentRepository>();
 builder.Services.AddSingleton<GetPaymentsForUserIdHandler>();
 builder.Services.AddSingleton<CreatePaymentHandler>();
+builder.Services.AddHttpClient<ITicketClient, TicketClient>(client =>
+{
+	client.BaseAddress = new Uri("http://localhost:5282");
+});
+builder.Services.AddSingleton<GenerateTicketHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

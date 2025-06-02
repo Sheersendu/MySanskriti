@@ -16,11 +16,13 @@ public class PaymentServiceController : ControllerBase
 {
 	private readonly CreatePaymentHandler _createPaymentHandler;
 	private readonly GetPaymentsForUserIdHandler _getPaymentsForUserIdHandler;
+	private readonly GenerateTicketHandler _generateTicketHandler;
 	
-	public PaymentServiceController(CreatePaymentHandler createPaymentHandler, GetPaymentsForUserIdHandler getPaymentsForUserIdHandler)
+	public PaymentServiceController(CreatePaymentHandler createPaymentHandler, GetPaymentsForUserIdHandler getPaymentsForUserIdHandler, GenerateTicketHandler generateTicketHandler)
 	{
 		_createPaymentHandler = createPaymentHandler;
 		_getPaymentsForUserIdHandler = getPaymentsForUserIdHandler;
+		_generateTicketHandler = generateTicketHandler;
 		StripeConfiguration.ApiKey = "";
 	}
 	
@@ -122,7 +124,10 @@ public class PaymentServiceController : ControllerBase
 						paymentStatus: PaymentStatus.Completed
 					);
 					Console.WriteLine($"Payment succeeded for Booking ID: {bookingIdStr}");
-				}
+					// Generate ticket after successful payment
+					var ticket = await _generateTicketHandler.Handle(Guid.Parse(bookingIdStr));
+					return Ok(ticket);
+				}	
 				break;
 
 			case "payment_intent.payment_failed":
@@ -138,7 +143,7 @@ public class PaymentServiceController : ControllerBase
 					paymentStatus: PaymentStatus.Failed
 				);
 				Console.WriteLine($"Payment failed. Booking ID: {bookingId}");
-				break;
+				return BadRequest();
 		}
 
 		return Ok();

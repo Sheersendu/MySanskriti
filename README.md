@@ -146,3 +146,4 @@ stripe listen --forward-to http://localhost:5269/api/payment/webhook-endpoint
 TODO:
 
 - Only ALLOW users with ADMIN Role to create and update location
+- Make the payment and ticket creation async
